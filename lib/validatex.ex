@@ -9,12 +9,12 @@ defmodule Validatex do
 
   defexception MultipleValidationFailures, failures: [] do
     def message(__MODULE__[failures: failures]) do
-      Enum.join((lc failure inlist failures, do: failure.message), "\n")
+      Enum.join((for failure <- failures, do: failure.message), "\n")
     end
   end
 
   def validate(plan) do
-      results = lc {name, value, spec} inlist plan do
+      results = for {name, value, spec} <- plan do
         {name, value, spec, Validatex.Validate.valid?(spec, value)}
       end
       only_errors = fn
@@ -24,13 +24,13 @@ defmodule Validatex do
       Enum.filter results, only_errors
   end
 
-  def validate!(plan, options // [report_all_errors: false]) do
+  def validate!(plan, options \\ [report_all_errors: false]) do
     case validate(plan) do
       [] -> true
       [{name, value, validation, error}|_] = errors ->
         if options[:report_all_errors] do
           exceptions =
-          lc {name, value, validation, error} inlist errors do
+          for {name, value, validation, error} <- errors do
             ValidationFailure.new(name: name, value: value, validation: validation, error: error)
           end
           raise MultipleValidationFailures, failures: exceptions
@@ -162,12 +162,12 @@ defmodule Validatex do
 
     def valid?(F[allow_empty: false], ""), do: :empty_not_allowed
 
-    def valid?(F[re: {Regex, _, _, _, _} = re], s) when is_binary(s) do
-        if Regex.match?(re, s), do: true, else: :no_match
+    def valid?(F[re: re]=v, s) when is_binary(re) do
+        valid?(v.re(~r"#{re}"), s)
     end
 
-    def valid?(F[re: re]=v, s) when is_binary(re) do
-        valid?(v.re(%r"#{re}"), s)
+    def valid?(F[re: re], s) when is_binary(s) do
+        if Regex.match?(re, s), do: true, else: :no_match
     end
 
     def valid?(F[], _), do: :string_expected

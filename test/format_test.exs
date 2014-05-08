@@ -25,8 +25,8 @@ defmodule Validatex.FormatTest do
   end
 
   test :regex do
-    assert V.valid?(F.new(re: %r/^1$/),"1") == true
-    assert V.valid?(F.new(re: %r/^1$/),"2") == :no_match
+    assert V.valid?(F.new(re: ~r/^1$/),"1") == true
+    assert V.valid?(F.new(re: ~r/^1$/),"2") == :no_match
   end
 
   test :string do
