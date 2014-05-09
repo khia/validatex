@@ -8,7 +8,7 @@ Validatex is a simple Elixir library for validating (input) data
 Validation Primitives
 ---------------------
 
-Using records defined in Validatex one can check individual values against
+Using structs defined in Validatex, one can check individual values against
 validators.
 
 For example:
@@ -16,16 +16,16 @@ For example:
 ```elixir
 iex> alias Validatex, as: V
 []
-iex> V.Validate.valid?(V.Range.new(to: 10), 1)
+iex> V.Validate.valid?(%V.Range{to: 10}, 1)
 true
-iex> V.Validate.valid?(V.Range.new(to: 0), 1) 
+iex> V.Validate.valid?(%V.Range{to: 0}, 1)
 :greater
 ````
 
 Also, if the second argument is not a validator, it will be matched against the first argument:
 
 ```elixir
-iex> V.Validate.valid?(1,1)                  
+iex> V.Validate.valid?(1,1)
 true
 iex> V.Validate.valid?(2,1)
 :lesser
@@ -39,11 +39,13 @@ Custom Validators
 One can define custom validators using by implementing `Validatex.Validate` protocol
 
 ```elixir
-  defrecord MyValidator, q: nil
+  defmodule MyValidator do
+    defstruct q: nil
 
-  defimpl Validatex.Validate, for: MyValidator do
-     alias MyValidator, as: V
-     def valid?(V[], v), do: v
+    defimpl Validatex.Validate do
+      alias MyValidator, as: V
+      def valid?(%V{}, v), do: v
+    end
   end
 ```
 
@@ -64,9 +66,9 @@ For example:
 
 ```elixir
 [
- {"user.name", username, V.Length.new(is: V.Range.new(from: 3, to: 16))},
- {"user.email", email, V.Length.new(is: V.Range.new(from: 3, to: 255))},
- {"user.age", age, V.Numericality.new(allow_string: true)}
+ {"user.name", username, %V.Length{is: %V.Range{from: 3, to: 16}}},
+ {"user.email", email, %V.Length{is: %V.Range{from: 3, to: 255}}},
+ {"user.age", age, %V.Numericality{allow_string: true}}
 ]
 ```
 
