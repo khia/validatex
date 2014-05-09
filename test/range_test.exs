@@ -48,7 +48,7 @@ defmodule Validatex.RangeTest do
   end
 
   defp inclusive_test(from, to, value) do
-       validate = V.valid?(R.new(from: from, to: to), value)
+       validate = V.valid?(%R{from: from, to: to}, value)
        cond do
           from !== nil and value < from ->
              validate == :lesser
@@ -72,7 +72,7 @@ defmodule Validatex.RangeTest do
   end
 
   defp exclusive_test(from, to, value) do
-       validate = V.valid?(R.new(from: from, to: to, exclusive: true), value)
+       validate = V.valid?(%R{from: from, to: to, exclusive: true}, value)
        cond do
          from !== nil and value <= from and from == to ->
               (validate == :lesser) or (validate == :greater)

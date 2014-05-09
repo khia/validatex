@@ -4,15 +4,15 @@ defmodule Validatex.AllTest do
   alias Validatex.All, as: All
 
   test :positive do
-    format = Validatex.Format.new(re: ~r/.*/i)
-    is_string = Validatex.Type.new(is: :string)
-    assert V.valid?(All.new(options: [format, is_string]), "1") == true
+    format = %Validatex.Format{re: ~r/.*/i}
+    is_string = %Validatex.Type{is: :string}
+    assert V.valid?(%All{options: [format, is_string]}, "1") == true
   end
 
   test :negative do
-    is_number = Validatex.Numericality.new
-    is_string = Validatex.Type.new(is: :string)
-    assert V.valid?(All.new(options: [is_number, is_string]), "1") ==
+    is_number = %Validatex.Numericality{}
+    is_string = %Validatex.Type{is: :string}
+    assert V.valid?(%All{options: [is_number, is_string]}, "1") ==
            [{is_number, :string_not_allowed}]
   end
 end

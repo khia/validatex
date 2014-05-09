@@ -4,8 +4,8 @@ defmodule Validatex.ElementTest do
   alias Validatex.Element, as: E
 
   test :element do
-    assert V.valid?(E.new(list: [1,2,3]), 1) == true
-    assert V.valid?(E.new(list: [1,2,3]), 0) == false
+    assert V.valid?(%E{list: [1,2,3]}, 1) == true
+    assert V.valid?(%E{list: [1,2,3]}, 0) == false
   end
 
 end
