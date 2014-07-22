@@ -1,7 +1,8 @@
 defmodule Validatex.Type do
   defstruct is: nil,
             allow_nil: false,
-            allow_undefined: false
+            allow_undefined: false,
+            name: nil
 
   defimpl Validatex.Validate do
     alias Validatex.Type, as: T
@@ -24,6 +25,8 @@ defmodule Validatex.Type do
     def valid?(%T{ is: :pid }, a) when is_pid(a), do: true
     def valid?(%T{ is: :tuple }, a) when is_tuple(a), do: true
     def valid?(%T{ is: :list }, a) when is_list(a), do: true
+    def valid?(%T{ is: :map }, a) when is_map(a), do: true
+    def valid?(%T{ is: :struct, name: name }, %{__struct__: name}), do: true
     def valid?(%T{}, _), do: false
   end
 

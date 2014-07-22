@@ -3,6 +3,14 @@ defmodule Validatex.TypeTest do
   alias Validatex.Validate, as: V
   alias Validatex.Type, as: T
 
+  defmodule S1 do
+    defstruct foo: nil, bar: nil
+  end
+
+  defmodule S2 do
+    defstruct baz: nil, name: nil
+  end
+
   test :integer do
     assert V.valid?(%T{is: :number},1) == true
     assert V.valid?(%T{is: :integer},1) == true
@@ -48,5 +56,16 @@ defmodule Validatex.TypeTest do
     assert V.valid?(%T{is: :string, allow_undefined: true}, :undefined)
   end
 
+
+  test :map do
+    assert not V.valid?(%T{is: :map}, nil) == true
+    assert V.valid?(%T{is: :map}, %{})
+    assert V.valid?(%T{is: :map}, %S1{})
+  end
+
+  test :struct do
+    assert not V.valid?(%T{is: :struct, name: S2}, %S1{}) == true
+    assert V.valid?(%T{is: :struct, name: S1}, %S1{})
+  end
 
 end
