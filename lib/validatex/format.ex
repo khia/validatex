@@ -15,12 +15,12 @@ defmodule Validatex.Format do
     def valid?(%F{allow_nil: true, default: default} = v, nil), do: valid?(v, default)
 
     def valid?(%F{allow_list: false}, l) when is_list(l), do: :list_not_allowed
-    def valid?(%F{allow_list: true} = v, l) when is_list(l), do: valid?(v, iolist_to_binary(l))
+    def valid?(%F{allow_list: true} = v, l) when is_list(l), do: valid?(v, IO.iodata_to_binary(l))
 
     def valid?(%F{allow_empty: false}, ""), do: :empty_not_allowed
 
-    def valid?(%F{re: re}=v, s) when is_binary(re) do
-        valid?(v.re(~r"#{re}"), s)
+    def valid?(%F{re: re}=v, s) when is_binary(re) and is_binary(s) do
+        valid?(%{v | re: ~r"#{re}"}, s)
     end
 
     def valid?(%F{re: re}, s) when is_binary(s) do

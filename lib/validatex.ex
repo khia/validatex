@@ -1,15 +1,16 @@
 defmodule Validatex do
-
-  defexception ValidationFailure, name: nil, value: nil, validation: nil, error: nil do
-    def message(__MODULE__[name: name, value: value, validation: validation, error: error]) do
+  defmodule ValidationFailure do
+    defexception name: nil, value: nil, validation: nil, error: nil, message: ""
+    def message(%__MODULE__{name: name, value: value, validation: validation, error: error}) do
       "Validation error on #{name}, #{inspect value} does not pass the validation " <>
       "of #{inspect validation} with a reason of #{inspect error}"
     end
   end
 
-  defexception MultipleValidationFailures, failures: [] do
-    def message(__MODULE__[failures: failures]) do
-      Enum.join((for failure <- failures, do: failure.message), "\n")
+  defmodule MultipleValidationFailures do
+    defexception failures: [], message: ""
+    def message(%__MODULE__{failures: failures}) do
+      Enum.join((for failure <- failures, do: ValidationFailure.message(failure)), "\n")
     end
   end
 
@@ -31,7 +32,7 @@ defmodule Validatex do
         if options[:report_all_errors] do
           exceptions =
           for {name, value, validation, error} <- errors do
-            ValidationFailure.new(name: name, value: value, validation: validation, error: error)
+            %ValidationFailure{name: name, value: value, validation: validation, error: error}
           end
           raise MultipleValidationFailures, failures: exceptions
         else

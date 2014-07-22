@@ -2,16 +2,18 @@ defmodule Validatex.CustomTest do
   use ExUnit.Case
   alias Validatex.Validate, as: V
 
-  defrecord MyValidator, q: nil
+  defmodule MyValidator do
+    defstruct q: nil
+  end
 
   defimpl Validatex.Validate, for: MyValidator do
      alias MyValidator, as: V
-     def valid?(V[], v), do: v
+     def valid?(%V{}, v), do: v
   end
 
   test :all do
-    assert V.valid?(MyValidator.new, true) == true
-    assert V.valid?(MyValidator.new, :something) == :something
+    assert V.valid?(%MyValidator{}, true) == true
+    assert V.valid?(%MyValidator{}, :something) == :something
   end
 
 end

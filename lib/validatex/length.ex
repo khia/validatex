@@ -9,7 +9,7 @@ defmodule Validatex.Length do
     end
 
     def valid?(%L{is: validator}, v) when is_binary(v) or is_tuple(v) do
-        Validatex.Validate.valid?(validator, size(v))
+        Validatex.Validate.valid?(validator, byte_size(v))
     end
 
     def valid?(%L{is: _validator}, _data), do: :bad_argument
